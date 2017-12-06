@@ -25,3 +25,9 @@ other way of operating out of the XY plane, but for now it is limited to this.
 This is especially useful for creating meshes for sculpting or meshes with good face densities
 from 2d CAD data, for arch. viz or other uses. Interior edges are respected, meaning creating
 dense meshes with interior regions is possible. Note the interior circle in the image above.
+
+# Contact
+
+tsvi@kadk.dk
+
+http://tomsvilans.com
