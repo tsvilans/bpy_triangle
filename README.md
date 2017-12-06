@@ -1,5 +1,6 @@
 # bpy_triangle
 A Blender add-on for Triangle.
+![Triangle in Blender.](https://raw.githubusercontent.com/tsvilans/bpy_triangle/master/triangle.png)
 
 ```
 Triangle: A Two-Dimensional Quality Mesh Generator and Delaunay Triangulator
@@ -24,3 +25,9 @@ other way of operating out of the XY plane, but for now it is limited to this.
 This is especially useful for creating meshes for sculpting or meshes with good face densities
 from 2d CAD data, for arch. viz or other uses. Interior edges are respected, meaning creating
 dense meshes with interior regions is possible. Note the interior circle in the image above.
+
+# Contact
+
+tsvi@kadk.dk
+
+http://tomsvilans.com
