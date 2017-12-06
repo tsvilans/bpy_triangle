@@ -19,6 +19,8 @@ The add-on adds a 'Triangulate' operator to Blender, which can take any planar m
 
 Input parameters are provided via a text field and are described in the Triangle documentation.
 
+![Triangle in Blender.](https://raw.githubusercontent.com/tsvilans/bpy_triangle/master/triangle_ui.png)
+
 Further work could be done to expand functionality and add support for meshing Ngon faces or some 
 other way of operating out of the XY plane, but for now it is limited to this.
 
