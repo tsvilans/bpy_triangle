@@ -1,5 +1,6 @@
 # bpy_triangle
 A Blender add-on for Triangle.
+![Triangle in Blender.](https://raw.githubusercontent.com/tsvilans/bpy_triangle/master/triangle.png)
 
 ```
 Triangle: A Two-Dimensional Quality Mesh Generator and Delaunay Triangulator
