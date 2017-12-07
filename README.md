@@ -28,6 +28,11 @@ This is especially useful for creating meshes for sculpting or meshes with good 
 from 2d CAD data, for arch. viz or other uses. Interior edges are respected, meaning creating
 dense meshes with interior regions is possible. Note the interior circle in the image above.
 
+# To do
+
+- Linux: Compile Triangle for Linux and adjust the script if necessary.
+- UI: Create interface for command line args for Triangle, instead of arg string.
+
 # Contact
 
 tsvi@kadk.dk
