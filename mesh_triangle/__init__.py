@@ -35,7 +35,6 @@ DEALINGS IN THE SOFTWARE.
 
 """
 
-
 bl_info = {
     "name": "Triangle",
     "author": "Tom Svilans (Blender wrapper)",
@@ -51,7 +50,7 @@ bl_info = {
 
 import bpy, bmesh,os
 from mesh_triangle.triangle import triangulate
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty, FloatProperty
 
 def get_nonmanifold_edges(mymesh):
     culprits=[]
@@ -72,38 +71,37 @@ def get_nonmanifold_edges(mymesh):
 def triangulate_object(obj_in, args):
     mesh_in = obj_in.to_mesh(bpy.context.scene, True, 'RENDER')
     verts = [x.co for x in mesh_in.vertices]
+    Nv = len(verts)
     faces = [[y for y in x.vertices] for x in mesh_in.polygons]
     border = get_nonmanifold_edges(mesh_in)
 
+    #if ('v' in args or 'D' in args):
+    #    return triangulate(verts, faces, border, args, True)[1]
     res = triangulate(verts, faces, border, args)
+    return (res[0], res[1], Nv)
 
+def add_mesh(verts, faces, mesh_name, obj_name):
     bm = bmesh.new()
-    
-    for i in res[0]:
-        v = (i[0], i[1], 0.0)
+    for v in verts:
         bm.verts.new(v)
-        
     bm.verts.ensure_lookup_table()
 
-    for i in res[1]:
-            bm.faces.new([bm.verts[x] for x in i])
-            
+    for f in faces:
+        bm.faces.new([bm.verts[x] for x in f])
     bm.faces.ensure_lookup_table()
     bm.verts.index_update()
-    
-    mesh_out = bpy.data.meshes.new(mesh_in.name + "_triangulated")
 
-    bm.to_mesh(mesh_out)
+    m = bpy.data.meshes.new(mesh_name)
+    bm.to_mesh(m)
     bm.free()
-    
-    obj_out = bpy.data.objects.new(obj_in.name + "_triangulated", mesh_out)
-    obj_out.matrix_world = obj_in.matrix_world
-    
-    bpy.context.scene.objects.link(obj_out)
+
+    o = bpy.data.objects.new(obj_name, m)
+
+    return o
 
 class Triangulate(bpy.types.Operator):
     bl_idname = "object.triangulate"
-    bl_label = "Triangulate using Triangle"
+    bl_label = "Triangulate (Triangle)"
     bl_options = {'REGISTER', 'UNDO'}
 
     args = StringProperty(
@@ -112,10 +110,136 @@ class Triangulate(bpy.types.Operator):
             default="pq20a1ziV",
             )
 
-    def execute(self, context):
+    use_args = BoolProperty(
+            name="Use args",
+            description="Use command line arg string instead of checkboxes.",
+            default=False)
+
+    cl_p = BoolProperty(
+            name="PSLG",
+            description="Triangulates a Planar Straight Line Graph (.poly file).",
+            default=True)
+    cl_r = BoolProperty(
+            name="Refine",
+            description="Refines a previously generated mesh.",
+            default=False)
+    cl_q = BoolProperty(
+            name="Quality",
+            description="Quality mesh generation with no angles smaller than the specified angle.",
+            default=True)
+    cl_q_angle = FloatProperty(
+            name="Quality angle",
+            description="Angle limit for quality mesh generation.",
+            default=20.0,
+            max=35.0,
+            min=0.0)
+    cl_a = BoolProperty(
+            name="Area",
+            description="Imposes a maximum triangle area constraint.",
+            default = False)
+    cl_a_value = FloatProperty(
+            name="Area value",
+            description="Value for area constraint.",
+            default=1.0,
+            min=0.001)
+    cl_c = BoolProperty(
+            name="Convex hull",
+            description="Encloses the convex hull with segments.",
+            default=False)
+    cl_D = BoolProperty(
+            name="Delaunay",
+            description="Conforming Delaunay: use this switch if you want " \
+            "all triangles in the mesh to be Delaunay, and not just constrained " \
+            "Delaunay; or if you want to ensure that all Voronoi vertices lie within " \
+            "the triangulation.",
+            default=False)
+    cl_v = BoolProperty(
+            name="Voronoi",
+            description="Outputs the Voronoi diagram associated with the triangulation. "\
+            "Does not attempt to detect degeneracies, so some Voronoi vertices may be duplicated.",
+            default=False)
+
+    def construct_args(self):
+        if (self.use_args):
+            return self.args
+        args = ""
+        if self.cl_p: 
+            args += 'p'
+        if self.cl_r: 
+            args += 'r'
+        if self.cl_q:
+            args+= 'q%f' % self.cl_q_angle
+        if self.cl_a:
+            args += 'a%f' % self.cl_a_value
+        if self.cl_c:
+            args += 'c'
+        if self.cl_D:
+            args += 'D'
+        if self.cl_v:
+            args += 'v'
+
+        args += 'ziQ'
+        return args
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+
+        box = col.box()
+        row = box.row(align=True)
+        row.prop(self, "use_args", text="Use args")
+
+        if self.use_args:
+            row = box.row(align=True)
+            row.prop(self, "args", text="Args")
+
+        layout.separator()
+
+        if not self.use_args:
+
+            box = col.box()
+
+            row = box.row(align=True)
+            row.prop(self, "cl_q")
+            row.prop(self, "cl_q_angle", text="")
+            layout.separator()
+
+            row = box.row(align=True)
+            row.prop(self, "cl_a")
+            row.prop(self, "cl_a_value", text="")
+            layout.separator()
+
+            row = box.row(align=True)
+            row.prop(self, "cl_c")
+            row.prop(self, "cl_p")
+            layout.separator()
+
+            #row = col.row(align=True)
+            #row.prop(self, "cl_v")
+            #row.prop(self, "cl_D")
+            #layout.separator()
+
+            row = box.row(align=True)
+            row.prop(self, "cl_r")
+            layout.separator()
+
+
+    def execute(self, ctx):
+        args = self.construct_args()
         objs = bpy.context.selected_objects
         for o in objs:
-            triangulate_object(o, self.args)
+            (verts, faces, N) = triangulate_object(o, args)
+            obj = add_mesh(verts, faces, o.data.name + '_triangulated', o.name + '_triangulate')
+
+            original_verts = [x for x in obj.data.vertices[:N]]
+            vg = obj.vertex_groups.new(name="Triangle Boundary")
+            vg.add(range(N), 1.0, 'ADD')
+            for v in original_verts:
+                v.select = True
+
+            obj.matrix_world = o.matrix_world
+            ctx.scene.objects.link(obj)
+
         return {'FINISHED'}
 
 class TrianglePanel(bpy.types.Panel):
@@ -141,8 +265,8 @@ def register():
     bpy.utils.register_class(TrianglePanel)
 
 def unregister():
-    bpy.utils.unregister_class(Triangulate)
     bpy.utils.unregister_class(TrianglePanel)
+    bpy.utils.unregister_class(Triangulate)
 
 if __name__ == "__main__":
     register()

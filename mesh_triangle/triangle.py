@@ -149,12 +149,14 @@ def createMesh(tio):
 
 	return (verts, faces)
 
-def triangulate(verts, faces, border, args):
+def triangulate(verts, faces, border, args, vor=False):
 	in_mesh = createTriangleIO(verts, faces, border)
 	out_mesh = TriangleIO()
 	vor_mesh = TriangleIO()
 
 	res = dll.triangulate(args.encode('utf-8'), ctypes.byref(in_mesh), ctypes.byref(out_mesh), ctypes.byref(vor_mesh))
+	if vor:
+		return (createMesh(out_mesh), createMesh(vor_mesh))
 	return createMesh(out_mesh)
 
 if __name__ == '__main__':
