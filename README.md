@@ -28,10 +28,15 @@ This is especially useful for creating meshes for sculpting or meshes with good 
 from 2d CAD data, for arch. viz or other uses. Interior edges are respected, meaning creating
 dense meshes with interior regions is possible. Note the interior circle in the image above.
 
+# Update 171208
+
+- Added UI with props for the most common / useful flags and settings.
+- Added vertex group support: triangulated objects have vertex group (Triangle Boundary) which contains the vertices of the input mesh. This makes it easy to define Softbody / Cloth goals, or anchors, or isolate regions. Bear in mind, if input edges are split, the new vertices won't be added to this vertex group. This might be fixed in the future.
+
 # To do
 
 - Linux: Compile Triangle for Linux and adjust the script if necessary.
-- UI: Create interface for command line args for Triangle, instead of arg string.
+- Find shortest path between ends of split edges, add the new vertices along that path to the Boundary vertex group.
 
 # Contact
 
