@@ -28,6 +28,10 @@ This is especially useful for creating meshes for sculpting or meshes with good 
 from 2d CAD data, for arch. viz or other uses. Interior edges are respected, meaning creating
 dense meshes with interior regions is possible. Note the interior circle in the image above.
 
+# Requirements
+
+- MS Visual C++ Redistributable 2015 64-bit (https://www.microsoft.com/en-us/download/details.aspx?id=48145)
+
 # Update 171208
 
 - Added UI with props for the most common / useful flags and settings.
