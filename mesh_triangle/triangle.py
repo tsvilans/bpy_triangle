@@ -34,14 +34,30 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 """
+import sys
 
 import ctypes, os
-from ctypes import POINTER, c_double, c_int, c_char
+from ctypes import POINTER, c_double, c_int, c_char_p, c_void_p
 
-dll_path = os.path.dirname(os.path.abspath(__file__)) + '\Triangle.dll'
-dll = ctypes.CDLL(dll_path)
+def triprint(msg):
+    print("Triangle::" + msg)
+
+lib_name = "Triangle.dll"
+
+triprint("System: {}".format(os.name))
+
+if os.name == "nt":
+    lib_name = "Triangle.dll"
+elif os.name == "linux":
+    lib_name = "Triangle.so"
+
+lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), lib_name)
+
+triprint("Lib path: {}".format(lib_path))
+lib = ctypes.CDLL(lib_path)
 
 class TriangleIO(ctypes.Structure):
+
     _fields_ = [('pointlist', POINTER(c_double)),
                 ('pointattributelist', POINTER(c_double)),
                 ('pointmarkerList', POINTER(c_int)),
@@ -66,107 +82,144 @@ class TriangleIO(ctypes.Structure):
                 ('normlist', POINTER(c_double)),
                 ('numberofedges', c_int)]
 
-dll.triangulate.argtypes = [POINTER(c_char), POINTER(TriangleIO), POINTER(TriangleIO), POINTER(TriangleIO)]
+    def __init__(self):
+        
+        pointlist = 0
+        pointattributelist = 0
+        pointmarkerList = 0
+        numberofpoints = 0
+        numberofpointattributes = 0
+        trianglelist = 0
+        triangleattributelist = 0
+        trianglearealist = 0
+        neighborlist = 0
+        numberoftriangles = 0
+        numberofcorners = 0
+        numberoftriangleattributes = 0
+        segmentlist = 0
+        segmentmarkerlist = 0
+        numberofsegments = 0
+        holelist = 0
+        numberofholes = 0
+        regionlist = 0
+        numberofregions = 0
+        edgelist = 0
+        edgemarkerlist = 0
+        normlist = 0
+        numberofedges = 0
+
+lib.triangulate.argtypes = [c_char_p, POINTER(TriangleIO), POINTER(TriangleIO), POINTER(TriangleIO)]
+lib.trifree.argtypes = [c_void_p]
 
 def createTriangleIO(verts, faces, segments):
-	io = TriangleIO()
+    io = TriangleIO()
 
-	N = len(verts)
-	points2d_raw = []
-	for i in range(N):
-		points2d_raw.append(verts[i][0])
-		points2d_raw.append(verts[i][1])
+    N = len(verts)
+    points2d_raw = []
+    for i in range(N):
+        points2d_raw.extend(verts[i][:2])
 
-	NF = len(faces)
-	faces_raw = []
-	for i in range(NF):
-		for j in range(len(faces[i])):
-			faces_raw.append(faces[i][j])
+    NF = len(faces)
+    faces_raw = []
+    areas = []
+    for i in range(NF):
+        areas.append(0.6)
+        for j in range(3):
+            faces_raw.append(faces[i][j])
+#       for j in range(len(faces[i])):
+#           faces_raw.append(faces[i][j])
 
-	NS = len(segments)
-	segments_raw = []
-	for i in range(NS):
-		segments_raw.append(segments[i][0])
-		segments_raw.append(segments[i][1])
+    NS = len(segments)
+    segments_raw = []
+    for i in range(NS):
+        segments_raw.extend(segments[i][:2])
 
-	pointmarkerlist = []
-	for i in range(N):
-		pointmarkerlist.append(0)
+    pointmarkerlist = []
+    for i in range(N):
+        pointmarkerlist.append(i)
 
-	segmentmarkerlist = []
-	for i in range(NS):
-		segmentmarkerlist.append(0)
 
-	regionlist = [0.0, 0.0, 0.0, 0.0]
+    segmentmarkerlist = []
+    for i in range(NS):
+        segmentmarkerlist.append(i)
 
-	io.pointlist = (c_double * (N * 2))(*points2d_raw)
-	io.pointattributelist = None
-	io.pointmarkerList = (c_int * N)(*pointmarkerlist)
-	io.numberofpoints = N
-	io.numberofpointattributes = 0
-	io.trianglelist = (c_int * (NF * 3))(*faces_raw)
-	io.triangleattributelist = None
-	io.trianglearealist = None
-	io.neighborlist = None
-	io.numberoftriangles = NF
-	io.numberofcorners = 3
-	io.numberoftriangleattributes = 0
-	io.segmentlist = (c_int * (NS * 2))(*segments_raw)
-	io.segmentmarkerlist = (c_int * NS)(*segmentmarkerlist)
-	io.numberofsegments = NS
-	io.holelist = None
-	io.numberofholes = 0
-	io.regionlist = (c_double * (1 * 4))(*regionlist)
-	io.numberofregions = 1
-	io.edgelist = None
-	io.edgemarkerlist = None
-	io.normlist = None
-	io.numberofedges = 0	
+    regionlist = [0.0, 0.0, 0.0, 0.0]
 
-	return io
+    io.pointlist = (c_double * len(points2d_raw))(*points2d_raw)
+    io.pointattributelist = None
+    io.pointmarkerList = (c_int * N)(*pointmarkerlist)
+    io.numberofpoints = N
+    io.numberofpointattributes = 0
+    io.trianglelist = (c_int * (NF * 3))(*faces_raw)
+    io.triangleattributelist = None
+    io.trianglearealist = (c_double * NF)(*areas)
+    io.neighborlist = None
+    io.numberoftriangles = NF
+    io.numberofcorners = 3
+    io.numberoftriangleattributes = 0
+    io.segmentlist = (c_int * (NS * 2))(*segments_raw)
+    io.segmentmarkerlist = (c_int * NS)(*segmentmarkerlist)
+    io.numberofsegments = NS
+    io.holelist = None
+    io.numberofholes = 0
+    #io.regionlist = (c_double * (1 * 4))(*regionlist)
+    #io.numberofregions = 1
+    io.regionlist = None
+    io.numberofregions = 0
+    io.edgelist = None
+    io.edgemarkerlist = None
+    io.normlist = None
+    io.numberofedges = 0    
+
+    return io
 
 def createMesh(tio):
-	verts = []
-	faces = []
+    verts = []
+    faces = []
 
-	N = int(tio.numberofpoints)
-	ii = 0
-	for i in range(N):
-		ii = i * 2
-		x = float(tio.pointlist[ii])
-		y = float(tio.pointlist[ii + 1])
-		verts.append((x, y, 0.0))
+    N = int(tio.numberofpoints)
+    ii = 0
+    for i in range(N):
+        ii = i * 2
+        x = float(tio.pointlist[ii])
+        y = float(tio.pointlist[ii + 1])
+        verts.append((x, y, 0.0))
 
-	NF = int(tio.numberoftriangles)
-	print ("Number of triangles: %i" % NF)
+    NF = int(tio.numberoftriangles)
+    triprint ("Number of triangles: %i" % NF)
 
-	for i in range(NF):
-		ii = i * 3
-		a = int(tio.trianglelist[ii])
-		b = int(tio.trianglelist[ii + 1])
-		c = int(tio.trianglelist[ii + 2])
-		faces.append((a, b, c))
+    for i in range(NF):
+        ii = i * 3
+        a = int(tio.trianglelist[ii])
+        b = int(tio.trianglelist[ii + 1])
+        c = int(tio.trianglelist[ii + 2])
+        faces.append((a, b, c))
 
-	return (verts, faces)
+    return (verts, faces)
 
 def triangulate(verts, faces, border, args, vor=False):
-	in_mesh = createTriangleIO(verts, faces, border)
-	out_mesh = TriangleIO()
-	vor_mesh = TriangleIO()
+    in_mesh = createTriangleIO(verts, faces, border)
+    out_mesh = TriangleIO()
+    vor_mesh = TriangleIO()
 
-	res = dll.triangulate(args.encode('utf-8'), ctypes.byref(in_mesh), ctypes.byref(out_mesh), ctypes.byref(vor_mesh))
-	if vor:
-		return (createMesh(out_mesh), createMesh(vor_mesh))
-	return createMesh(out_mesh)
+    mutable_string = ctypes.create_string_buffer(str.encode(args))
+    res = lib.triangulate(mutable_string, in_mesh, out_mesh, vor_mesh)
+
+    if vor:
+        return (createMesh(out_mesh), createMesh(vor_mesh))
+    return createMesh(out_mesh)
 
 if __name__ == '__main__':
-	verts = [(0,0,0), (1,0,0), (1,1,0), (0,1,0)]
-	faces = [(0, 1, 2), (1, 2, 3)]
-	in_mesh = createTriangleIO(verts, faces)
-	out_mesh = TriangleIO()
-	vor_mesh = TriangleIO()
 
-	res = dll.triangulate("pczAevn".encode('utf-8'), ctypes.byref(in_mesh), ctypes.byref(out_mesh), ctypes.byref(vor_mesh))
+    print("Start test...")
+    verts = [(0,0,0), (1,0,0), (1,1,0), (0,1,0)]
+    faces = [(0, 1, 2), (1, 2, 3)]
+    segments = [(0,1), (1,2), (2,3), (3,0)]
+    in_mesh = createTriangleIO(verts, faces, segments)
+    out_mesh = TriangleIO()
+    vor_mesh = TriangleIO()
 
-	print(res)
+    res = lib.triangulate("pczAevn".encode('utf-8'), in_mesh, out_mesh, vor_mesh)
+
+    print(res)
 
