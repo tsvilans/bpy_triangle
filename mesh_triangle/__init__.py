@@ -112,51 +112,51 @@ class Triangulate(bpy.types.Operator):
 
     use_args = BoolProperty(
             name="Use args",
-            description="Use command line arg string instead of checkboxes.",
+            description="Use command line arg string instead of checkboxes",
             default=False)
 
     cl_p = BoolProperty(
             name="PSLG",
-            description="Triangulates a Planar Straight Line Graph (.poly file).",
+            description="Triangulates a Planar Straight Line Graph (.poly file)",
             default=True)
     cl_r = BoolProperty(
             name="Refine",
-            description="Refines a previously generated mesh.",
+            description="Refines a previously generated mesh",
             default=False)
     cl_q = BoolProperty(
             name="Quality",
-            description="Quality mesh generation with no angles smaller than the specified angle.",
+            description="Quality mesh generation with no angles smaller than the specified angle",
             default=True)
     cl_q_angle = FloatProperty(
             name="Quality angle",
-            description="Angle limit for quality mesh generation.",
+            description="Angle limit for quality mesh generation",
             default=20.0,
             max=35.0,
             min=0.0)
     cl_a = BoolProperty(
             name="Area",
-            description="Imposes a maximum triangle area constraint.",
+            description="Imposes a maximum triangle area constraint",
             default = False)
     cl_a_value = FloatProperty(
             name="Area value",
-            description="Value for area constraint.",
+            description="Value for area constraint",
             default=1.0,
             min=0.001)
     cl_c = BoolProperty(
             name="Convex hull",
-            description="Encloses the convex hull with segments.",
+            description="Encloses the convex hull with segments",
             default=False)
     cl_D = BoolProperty(
             name="Delaunay",
             description="Conforming Delaunay: use this switch if you want " \
             "all triangles in the mesh to be Delaunay, and not just constrained " \
             "Delaunay; or if you want to ensure that all Voronoi vertices lie within " \
-            "the triangulation.",
+            "the triangulation",
             default=False)
     cl_v = BoolProperty(
             name="Voronoi",
             description="Outputs the Voronoi diagram associated with the triangulation. "\
-            "Does not attempt to detect degeneracies, so some Voronoi vertices may be duplicated.",
+            "Does not attempt to detect degeneracies, so some Voronoi vertices may be duplicated",
             default=False)
 
     def construct_args(self):

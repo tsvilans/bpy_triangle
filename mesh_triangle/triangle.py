@@ -34,6 +34,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 """
+
 import sys
 
 import ctypes, os
@@ -48,8 +49,8 @@ triprint("System: {}".format(os.name))
 
 if os.name == "nt":
     lib_name = "Triangle.dll"
-elif os.name == "linux":
-    lib_name = "Triangle.so"
+elif os.name == "posix":
+    lib_name = "libtriangle.so"
 
 lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), lib_name)
 
@@ -209,17 +210,18 @@ def triangulate(verts, faces, border, args, vor=False):
         return (createMesh(out_mesh), createMesh(vor_mesh))
     return createMesh(out_mesh)
 
+
 if __name__ == '__main__':
 
     print("Start test...")
-    verts = [(0,0,0), (1,0,0), (1,1,0), (0,1,0)]
-    faces = [(0, 1, 2), (1, 2, 3)]
-    segments = [(0,1), (1,2), (2,3), (3,0)]
-    in_mesh = createTriangleIO(verts, faces, segments)
-    out_mesh = TriangleIO()
-    vor_mesh = TriangleIO()
+    #verts = [(0,0,0), (1,0,0), (1,1,0), (0,1,0)]
+    #faces = [(0, 1, 2), (1, 2, 3)]
+    #segments = [(0,1), (1,2), (2,3), (3,0)]
+    #in_mesh = createTriangleIO(verts, faces, segments)
+    #out_mesh = TriangleIO()
+    #vor_mesh = TriangleIO()
 
-    res = lib.triangulate("pczAevn".encode('utf-8'), in_mesh, out_mesh, vor_mesh)
+    #res = lib.triangulate("pczAevn".encode('utf-8'), in_mesh, out_mesh, vor_mesh)
 
-    print(res)
+    print("Test")
 
