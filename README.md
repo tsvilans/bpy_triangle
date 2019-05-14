@@ -28,9 +28,10 @@ This is especially useful for creating meshes for sculpting or meshes with good 
 from 2d CAD data, for arch. viz or other uses. Interior edges are respected, meaning creating
 dense meshes with interior regions is possible. Note the interior circle in the image above.
 
-# Requirements
+# Update 190514
 
-- MS Visual C++ Redistributable 2015 64-bit (https://www.microsoft.com/en-us/download/details.aspx?id=48145)
+- Added Linux support.
+- Compiled updated Triangle lib which fixes issues for newer Windows versions https://github.com/libigl/triangle
 
 # Update 171208
 
@@ -39,8 +40,9 @@ dense meshes with interior regions is possible. Note the interior circle in the 
 
 # To do
 
-- Linux: Compile Triangle for Linux and adjust the script if necessary.
+- ~~Linux: Compile Triangle for Linux and adjust the script if necessary.~~
 - Find shortest path between ends of split edges, add the new vertices along that path to the Boundary vertex group.
+- Find way to expose holes and regions in Blender UI.
 
 # Contact
 
