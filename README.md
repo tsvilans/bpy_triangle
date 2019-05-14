@@ -31,7 +31,7 @@ dense meshes with interior regions is possible. Note the interior circle in the 
 # Update 190514
 
 - Added Linux support.
-- Compiled updated Triangle lib which fixes issues for newer Windows versions https://github.com/libigl/triangle
+- Compiled updated Triangle lib which fixes issues for newer Windows versions: https://github.com/libigl/triangle
 
 # Update 171208
 
