@@ -254,7 +254,7 @@ class Triangulate(bpy.types.Operator):
 class TRIANGLE_PT_Settings(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'Tools'
     bl_context = "objectmode"
     bl_label = "Triangle"
