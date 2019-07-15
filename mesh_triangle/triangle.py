@@ -161,6 +161,10 @@ def createTriangleIO(verts, faces, segments):
     io.segmentlist = (c_int * (NS * 2))(*segments_raw)
     io.segmentmarkerlist = (c_int * NS)(*segmentmarkerlist)
     io.numberofsegments = NS
+
+    #holelist = [0.0, 0.0]
+    #io.holelist = (c_double * 2)(*holelist)
+    #io.numberofholes = 1
     io.holelist = None
     io.numberofholes = 0
     #io.regionlist = (c_double * (1 * 4))(*regionlist)
