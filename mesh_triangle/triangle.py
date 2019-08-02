@@ -45,7 +45,7 @@ def triprint(msg):
 
 lib_name = "Triangle.dll"
 
-triprint("System: {}".format(os.name))
+#triprint("System: {}".format(os.name))
 
 if os.name == "nt":
     lib_name = "Triangle.dll"
@@ -54,7 +54,7 @@ elif os.name == "posix":
 
 lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), lib_name)
 
-triprint("Lib path: {}".format(lib_path))
+#triprint("Lib path: {}".format(lib_path))
 lib = ctypes.CDLL(lib_path)
 
 class TriangleIO(ctypes.Structure):
