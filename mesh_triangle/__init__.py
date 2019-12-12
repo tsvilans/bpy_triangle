@@ -78,6 +78,10 @@ def triangulate_object(obj_in, args):
     #if ('v' in args or 'D' in args):
     #    return triangulate(verts, faces, border, args, True)[1]
     res = triangulate(verts, faces, border, args)
+
+    for i in range(Nv):
+        res[0][i] = (res[0][i][0], res[0][i][1], verts[i][2])
+
     return (res[0], res[1], Nv)
 
 def add_mesh(verts, faces, mesh_name, obj_name):
@@ -229,6 +233,7 @@ class Triangulate(bpy.types.Operator):
         objs = bpy.context.selected_objects
         for o in objs:
             (verts, faces, N) = triangulate_object(o, args)
+
             obj = add_mesh(verts, faces, o.data.name + '_triangulated', o.name + '_triangulate')
 
 
