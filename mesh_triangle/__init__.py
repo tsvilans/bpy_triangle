@@ -39,8 +39,8 @@ bl_info = {
     "name": "Triangle",
     "author": "Tom Svilans (Blender wrapper)",
     "version": (1, 0, 0),
-    "blender": (2, 80, 0),
-    "location": "View3D > Toolbar",
+    "blender": (3, 0, 0),
+    "location": "View3D > Tool",
     "warning": "",
     "description": "A two-dimensional quality mesh generator and Delaunay triangulator.",
     "wiki_url": "http://www.cs.cmu.edu/~quake/triangle.html"
@@ -252,7 +252,6 @@ class Triangulate(bpy.types.Operator):
 
             obj.matrix_world = o.matrix_world
             ctx.scene.collection.objects.link(obj)
-            #ctx.scene.objects.link(obj)
 
         return {'FINISHED'}
 
@@ -260,7 +259,7 @@ class TRIANGLE_PT_Settings(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Tools'
+    bl_category = 'Tool'
     bl_context = "objectmode"
     bl_label = "Triangle"
 
